@@ -58,7 +58,7 @@ export class UserService {
 
     const userWithAccount = this.userRepository.create({
       ...newUser,
-      account: newAccount.id,
+      accountId: newAccount.id,
     });
 
     await this.userRepository.save(userWithAccount);
@@ -98,7 +98,11 @@ export class UserService {
   }
 
   async findUserByName(userName: string) {
-    const foundUser = await this.userRepository.findOneBy({ userName });
+    const foundUser = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.accountId', 'account.id')
+      .where('user.userName = :userName', { userName })
+      .getOne();
 
     return foundUser;
   }

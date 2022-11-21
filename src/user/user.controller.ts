@@ -14,11 +14,15 @@ export class UserController {
     return await this.userService.createNewUser(user);
   }
 
-  @Get()
+  @Get('/account')
   async getLoggedUser(@CurrentUser() user: User) {
     const { id, userName } = user;
 
     const loggedUser = await this.userService.findUserByName(userName);
+
+    if (!loggedUser) {
+      throw new Error('Usuário não encontrado.');
+    }
 
     return { ...loggedUser, password: undefined };
   }

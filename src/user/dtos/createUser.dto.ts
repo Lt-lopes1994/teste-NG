@@ -26,7 +26,7 @@ export class User {
   @IsAlphanumeric()
   password: string;
 
-  @OneToOne(() => Account)
-  @JoinColumn()
-  account: Account['id'];
+  @OneToOne(() => Account, (account) => account.id)
+  @JoinColumn({ name: 'accountId' })
+  accountId: Account['id'];
 }

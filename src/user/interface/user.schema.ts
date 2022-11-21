@@ -18,15 +18,9 @@ export const UserSchema = new EntitySchema<User>({
       type: String,
       nullable: false,
     },
-  },
-  relations: {
-    account: {
-      type: 'one-to-one',
-      target: 'Account',
-      inverseSide: 'user',
-      joinColumn: true,
-      cascade: true,
-      createForeignKeyConstraints: true,
+    accountId: {
+      type: Number,
+      nullable: false,
     },
   },
 });

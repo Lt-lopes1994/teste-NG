@@ -30,7 +30,7 @@ export class TransactionService {
     return newTransaction;
   }
 
-  async getTransactions(userId: number) {
+  async getCashOutTransactions(userId: number) {
     const foundUser = await this.userService.findOneUserById(userId);
 
     if (!foundUser) {
@@ -43,13 +43,34 @@ export class TransactionService {
       throw new Error('Conta não encontrada.');
     }
 
-    const transactions = await this.transactionRepository
-      .createQueryBuilder()
-      .select('transaction')
-      .where('debitedAccount = :id', { id: foundAccount.id })
-      .orWhere('creditedAccount = :id', { id: foundAccount.id })
-      .getMany();
+    const CashOutTransactions = await this.transactionRepository.find({
+      where: {
+        debitedAccount: foundAccount.id,
+      },
+    });
 
-    return transactions;
+    return CashOutTransactions;
+  }
+
+  async getCashInTransactions(userId: number) {
+    const foundUser = await this.userService.findOneUserById(userId);
+
+    if (!foundUser) {
+      throw new Error('Usuário não encontrado.');
+    }
+
+    const foundAccount = await this.accountService.findOneAccountById(userId);
+
+    if (!foundAccount) {
+      throw new Error('Conta não encontrada.');
+    }
+
+    const CashInTransactions = await this.transactionRepository.find({
+      where: {
+        creditedAccount: foundAccount.id,
+      },
+    });
+
+    return CashInTransactions;
   }
 }

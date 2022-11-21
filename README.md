@@ -1,30 +1,6 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Exercicio de teste para a vaga na empresa NG.
 
 ## Installation
 
@@ -40,34 +16,109 @@ $ npm run start
 
 # watch mode
 $ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
 
-## Test
+```typescript
+rota de login = http://localhost:8000/api/v1/login
 
-```bash
-# unit tests
-$ npm run test
+POST:
+exemplo de body:
+{
+"userName": "User name",
+"password": "Senha_do_usuario"
+}
 
-# e2e tests
-$ npm run test:e2e
+retorno da rota: {
+ "access_token": "JWT_TOKEN"
+}
 
-# test coverage
-$ npm run test:cov
 ```
 
-## Support
+```typescript
+rota de cadastro = http://localhost:8000/api/v1/user
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+http://localhost:8000/api/v1/user
 
-## Stay in touch
+POST:
+exemplo de body:
+{
+"userName": "User name",
+"password": "Senha_do_usuario"
+}
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+{
+ "id": 0,
+ "userName": "USER_NAME",
+ "accountId": 0
+}
 
-## License
+```
 
-Nest is [MIT licensed](LICENSE).
+```typescript
+rota de consulta de usuario logado = http://localhost:8000/api/v1/user/account
+
+GET:
+
+Extrai o usuario logado do token JWT com funções automaticas do nestjs
+
+exemplo de retorno:
+{
+ "id": 2,
+ "userName": "Thalita",
+ "accountId": {
+  "id": 2,
+  "balance": 20000
+ }
+}
+
+```
+
+
+```typescript
+rota de consulta as transações = http://localhost:8000/api/v1/transaction
+
+GET: 
+Sem envio de body. Utiliza o usuario logado para consultar as transações.
+
+exemplo de retorno: 
+{
+ "transacoes_enviadas": 
+  [{
+    "id": 1,
+    "value": 5000,
+    "createdAt": "2022-11-21 15:07:51"
+},
+ ],
+ "transacoes_recebidas": [
+  {
+    "id": 1,
+    "value": 5000,
+    "createdAt": "2022-11-21 15:07:51"
+  },
+ ]
+}
+```
+
+```typescript
+rota de transferencia = http://localhost:8000/api/v1/accounts/transactions
+
+PUT: 
+Envio de body com o valor da transferencia e o id da conta que irá receber a transferencia.
+Data de criação é gerada automaticamente.
+id da conta que irá enviar a transferencia é pego do token JWT.
+
+Exemplo de body:
+{
+ "value": 5000,
+ "targetUserName": "USER_NAME"
+}
+
+exemplo de retorno: 
+{
+  "value": 5000,
+  "debitedAccount": 2,
+  "creditedAccount": 1,
+  "id": 4,
+  "createdAt": "2022-11-21 17:21:42"
+}
+```

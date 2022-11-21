@@ -17,6 +17,26 @@ export class TransactionController {
   async getUserTransctions(@CurrentUser() user: User) {
     const { id } = user;
 
-    this.transactionService.getTransactions(id);
+    const userCashOutTransaction =
+      await this.transactionService.getCashOutTransactions(id);
+
+    const userCashInTransaction =
+      await this.transactionService.getCashInTransactions(id);
+
+    if (
+      userCashOutTransaction.length === 0 ||
+      userCashInTransaction.length === 0
+    ) {
+      return JSON.stringify({
+        message: `Não existem transações para esse usuário`,
+      });
+    }
+
+    const userTransactions = {
+      transacoes_enviadas: userCashOutTransaction,
+      transacoes_recebidas: userCashInTransaction,
+    };
+
+    return userTransactions;
   }
 }

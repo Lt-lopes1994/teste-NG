@@ -3,8 +3,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  OneToOne,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -13,17 +13,15 @@ export class Transaction {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Account)
-  @JoinColumn()
-  debitedAccount: Account['id'];
-
-  @OneToOne(() => Account)
-  @JoinColumn()
-  creditedAccount: number;
-
   @Column()
   value: number;
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @ManyToOne(() => Account, (account) => account.id)
+  debitedAccount: Account['id'];
+
+  @ManyToOne(() => Account, (account) => account.id)
+  creditedAccount: Account['id'];
 }

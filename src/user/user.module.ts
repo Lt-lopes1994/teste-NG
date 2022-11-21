@@ -6,12 +6,10 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { AccountsService } from 'src/accounts/accounts.service';
 import { TransactionModule } from 'src/transaction/transaction.module';
+import { AccountsModule } from 'src/accounts/accounts.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([UserSchema, AccountSchema]),
-    TransactionModule,
-  ],
+  imports: [TypeOrmModule.forFeature([UserSchema, AccountSchema])],
   providers: [UserService, AccountsService],
   controllers: [UserController],
   exports: [TypeOrmModule, UserService],

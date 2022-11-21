@@ -104,6 +104,12 @@ export class UserService {
       .where('user.userName = :userName', { userName })
       .getOne();
 
+    if (!foundUser) {
+      throw new BadRequestException(
+        `Nome ${userName} não existe. Verifique a digitação.`,
+      );
+    }
+
     return foundUser;
   }
 }

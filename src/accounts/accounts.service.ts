@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TransactionService } from 'src/transaction/transaction.service';
+import { UserService } from '../user/user.service';
 import { Repository } from 'typeorm';
 import { Account } from './dtos/createAccount.dto';
 
@@ -8,7 +8,7 @@ import { Account } from './dtos/createAccount.dto';
 export class AccountsService {
   constructor(
     @InjectRepository(Account)
-    private readonly accountRepository: Repository<Account>, // private readonly transactionService: TransactionService,
+    private readonly accountRepository: Repository<Account>,
   ) {}
 
   private readonly logger = new Logger(AccountsService.name);
@@ -21,37 +21,68 @@ export class AccountsService {
     return await this.accountRepository.save(newAccount);
   }
 
-  // async cashOut(account: Account, value: number): Promise<Account> {
-  //   const { balance } = account;
+  async findOneAccountById(id: number): Promise<Account> {
+    return await this.accountRepository
+      .createQueryBuilder('account')
+      .where('account.id = :id', { id })
+      .getOne();
+  }
 
-  //   if (balance < value) {
-  //     throw new Error(`Saldo insuficiente.`);
-  //   }
+  async getAccounts(): Promise<Account[]> {
+    return await this.accountRepository.find();
+  }
 
-  //   const newBalance = balance - value;
+  async transactionCashInCashOut(
+    accountId: number,
+    cashIn: boolean,
+    value: number,
+  ): Promise<Account> {
+    const account = await this.findOneAccountById(accountId);
 
-  //   const updatedAccount = await this.accountRepository.save({
-  //     ...account,
-  //     balance: newBalance,
-  //   });
+    // const foundUser = this.userService.findOneUserById();
 
-  //   return updatedAccount;
-  // }
+    if (!account) {
+      throw new Error('Conta não encontrada.');
+    }
 
-  // async cashIn(account: Account, value: number): Promise<Account> {
-  //   const { balance } = account;
+    if (cashIn) {
+      account.balance += value;
+    } else {
+      account.balance -= value;
+    }
 
-  //   const newBalance = balance + value;
+    return account;
+  }
 
-  //   const updatedAccount = await this.accountRepository.save({
-  //     ...account,
-  //     balance: newBalance,
-  //   });
+  async cashOut(accountId: number, value: number): Promise<Account> {
+    const account = await this.findOneAccountById(accountId);
 
-  //   return updatedAccount;
-  // }
+    if (!account) {
+      throw new Error('Conta não encontrada.');
+    }
 
-  // async findOneAccountById(id: number): Promise<Account> {
-  //   return await this.accountRepository.findOneBy({ id });
-  // }
+    if (account.balance < value) {
+      throw new BadRequestException('Saldo insuficiente.');
+    }
+
+    account.balance -= value;
+
+    this.accountRepository.update(accountId, account);
+
+    return account;
+  }
+
+  async cashIn(accountId: number, value: number): Promise<Account> {
+    const account = await this.findOneAccountById(accountId);
+
+    if (!account) {
+      throw new Error('Conta não encontrada.');
+    }
+
+    account.balance += value;
+
+    this.accountRepository.update(accountId, account);
+
+    return account;
+  }
 }

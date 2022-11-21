@@ -14,6 +14,14 @@ export const TransactionSchema = new EntitySchema<Transaction>({
       type: Number,
       nullable: false,
     },
+    debitedAccount: {
+      type: Number,
+      nullable: false,
+    },
+    creditedAccount: {
+      type: Number,
+      nullable: false,
+    },
     createdAt: {
       type: Date,
       nullable: false,
